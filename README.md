@@ -1,6 +1,9 @@
 # BlumBot
 BlumBot Auto Farm
 
+## ⚠️Warning
+I am not responsible for your account. Please consider the potential risks before using this bot.
+
 ## Features
 | Feature                   | Supported |
 | :------------------------ | :-------- |
