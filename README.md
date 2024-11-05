@@ -27,4 +27,10 @@ BlumQueries.Add(new BlumQuery() { Index = 2, Name = "Account 3", Auth = "query_i
 ```
 and build or start project ([Get Telegram MiniGame Query ID using Chrome](https://youtu.be/r0Ulqev-9M4))
 
+## ☕Buy me a coffee
+```
+USDT(TRC20): TRjdnBWpS1xT4a2oKQdFsM3AAc6TxVmqGZ
+TON: UQBmpnet6lYCLXObDwJLitDuMcPIocJIKVxg6pLvaFv5fRmO
+```
+
 ![](http://visit.parselecom.com/Api/Visit/27/CF3476)
