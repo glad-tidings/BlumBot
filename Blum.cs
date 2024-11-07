@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace BlumBot
 {
@@ -8,6 +8,13 @@ namespace BlumBot
         public int Index { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Auth { get; set; } = string.Empty;
+        public string Proxy { get; set; } = string.Empty;
+    }
+
+    public class Httpbin
+    {
+        [JsonPropertyName("origin")]
+        public string Origin { get; set; } = string.Empty;
     }
 
     public class BlumLoginRequest
