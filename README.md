@@ -13,17 +13,18 @@ I am not responsible for your account. Please consider the potential risks befor
 | Auto Claim Weekly Tasks   | ✅        |
 | Auto Claim Farming        | ✅        |
 | Auto Start Farming        | ✅        |
+| Multi Proxy               | ✅        |
 
 ## Settings
 open project in visual studio ([Download Visual Studio Code](https://code.visualstudio.com/download)) and in program.cs find
 ```c#
-BlumQueries.Add(new BlumQuery() { Index = 0, Name = "Account 1", Auth = "query_id of account 1" });
+BlumQueries.Add(new BlumQuery() { Index = 0, Name = "Account 1", Auth = "query_id of account 1", Proxy = "" });
 ```
 for each account(max 17) you need to add an Add in a new line, for example for 3 accounts:
 ```c#
-BlumQueries.Add(new BlumQuery() { Index = 0, Name = "Account 1", Auth = "query_id of account 1" });
-BlumQueries.Add(new BlumQuery() { Index = 1, Name = "Account 2", Auth = "query_id of account 2" });
-BlumQueries.Add(new BlumQuery() { Index = 2, Name = "Account 3", Auth = "query_id of account 3" });
+BlumQueries.Add(new BlumQuery() { Index = 0, Name = "Account 1", Auth = "query_id of account 1", Proxy = "" });
+BlumQueries.Add(new BlumQuery() { Index = 1, Name = "Account 2", Auth = "query_id of account 2", Proxy = "socks5://10.10.10.10:1080" });
+BlumQueries.Add(new BlumQuery() { Index = 2, Name = "Account 3", Auth = "query_id of account 3", Proxy = "socks4://10.10.10.10:1080" });
 ```
 and build or start project ([Get Telegram MiniGame Query ID using Chrome](https://youtu.be/r0Ulqev-9M4))
 
