@@ -15,7 +15,7 @@ I am not responsible for your account. Please consider the potential risks befor
 | Auto Start Farming        | ✅        |
 
 ## Settings
-open project in visual studio and in program.cs find
+open project in visual studio ([Download Visual Studio Code](https://code.visualstudio.com/download)) and in program.cs find
 ```c#
 BlumQueries.Add(new BlumQuery() { Index = 0, Name = "Account 1", Auth = "query_id of account 1" });
 ```
