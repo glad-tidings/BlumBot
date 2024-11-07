@@ -1,4 +1,5 @@
-﻿using System.Text;
+using System.Net;
+using System.Text;
 using System.Text.Json;
 
 namespace BlumBot
@@ -10,6 +11,7 @@ namespace BlumBot
         private readonly string AccessToken;
         public readonly bool HasError;
         public readonly string ErrorMessage;
+        public readonly string IpAddress;
 
         public BlumBots(BlumQuery Query)
         {
@@ -18,20 +20,51 @@ namespace BlumBot
             if (Login is not null)
             {
                 AccessToken = Login.Token?.Access ?? string.Empty;
+                IpAddress = GetIP().Result;
                 HasError = false;
                 ErrorMessage = "";
             }
             else
             {
                 AccessToken = string.Empty;
+                IpAddress = string.Empty;
                 HasError = true;
                 ErrorMessage = "login failed";
             }
         }
 
+        private async Task<string> GetIP()
+        {
+            HttpClient client;
+            if (!string.IsNullOrEmpty(PubQuery.Proxy))
+            {
+                var handler = new HttpClientHandler() { Proxy = new WebProxy() { Address = new Uri(PubQuery.Proxy) } };
+                client = new HttpClient(handler) { Timeout = new TimeSpan(0, 0, 30) };
+            }
+            else
+                client = new HttpClient() { Timeout = new TimeSpan(0, 0, 30) };
+            HttpResponseMessage httpResponse = null;
+            try
+            {
+                httpResponse = await client.GetAsync($"https://httpbin.org/ip");
+            }
+            catch { }
+            if (httpResponse is not null)
+            {
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    var responseStream = await httpResponse.Content.ReadAsStreamAsync();
+                    var responseJson = await JsonSerializer.DeserializeAsync<Httpbin>(responseStream);
+                    return responseJson?.Origin ?? string.Empty;
+                }
+            }
+
+            return "";
+        }
+
         private async Task<BlumLoginResponse?> BlumLogin()
         {
-            var BAPI = new BlumApi(0, PubQuery.Auth, PubQuery.Index);
+            var BAPI = new BlumApi(0, PubQuery.Auth, PubQuery.Index, PubQuery.Proxy);
             var request = new BlumLoginRequest() { Query = PubQuery.Auth };
             string serializedRequest = JsonSerializer.Serialize(request);
             var serializedRequestContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
@@ -51,7 +84,7 @@ namespace BlumBot
 
         public async Task<long> BlumTimeNow()
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
             var httpResponse = await BAPI.BAPIGet($"https://game-domain.blum.codes/api/v1/time/now");
             if (httpResponse is not null)
             {
@@ -68,8 +101,8 @@ namespace BlumBot
 
         public async Task<bool> BlumDailyReward()
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
-            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/daily-reward?offset=-210", null);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
+            var httpResponse = await BAPI.BAPIGet($"https://game-domain.blum.codes/api/v1/daily-reward?offset=-210");
             if (httpResponse is not null)
             {
                 if (httpResponse.IsSuccessStatusCode)
@@ -81,7 +114,7 @@ namespace BlumBot
 
         public async Task<BlumUserBalanceResponse?> BlumUserBalance()
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
             var httpResponse = await BAPI.BAPIGet($"https://game-domain.blum.codes/api/v1/user/balance");
             if (httpResponse is not null)
             {
@@ -98,8 +131,8 @@ namespace BlumBot
 
         public async Task<bool> BlumStartFarming()
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
-            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/start", null);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
+            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/start", (HttpContent)null);
             if (httpResponse is not null)
             {
                 if (httpResponse.IsSuccessStatusCode)
@@ -111,8 +144,8 @@ namespace BlumBot
 
         public async Task<bool> BlumClaimFarming()
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
-            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/claim", null);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
+            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/claim", (HttpContent)null);
             if (httpResponse is not null)
             {
                 if (httpResponse.IsSuccessStatusCode)
@@ -124,7 +157,7 @@ namespace BlumBot
 
         public async Task<BlumFriendsBalanceResponse?> BlumFriendsBalance()
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
             var httpResponse = await BAPI.BAPIGet($"https://user-domain.blum.codes/api/v1/friends/balance");
             if (httpResponse is not null)
             {
@@ -141,8 +174,8 @@ namespace BlumBot
 
         public async Task<bool> BlumClaimFriends()
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
-            var httpResponse = await BAPI.BAPIPost($"https://user-domain.blum.codes/api/v1/friends/claim", null);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
+            var httpResponse = await BAPI.BAPIPost($"https://user-domain.blum.codes/api/v1/friends/claim", (HttpContent)null);
             if (httpResponse is not null)
             {
                 if (httpResponse.IsSuccessStatusCode)
@@ -171,7 +204,7 @@ namespace BlumBot
 
         public async Task<List<BlumTasksResponse>?> BlumTasks()
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
             var httpResponse = await BAPI.BAPIGet($"https://earn-domain.blum.codes/api/v1/tasks");
             if (httpResponse is not null)
             {
@@ -188,8 +221,8 @@ namespace BlumBot
 
         public async Task<bool> BlumStartTask(string taskId)
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
-            var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/start", null);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
+            var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/start", (HttpContent)null);
             if (httpResponse is not null)
             {
                 if (httpResponse.IsSuccessStatusCode)
@@ -201,7 +234,7 @@ namespace BlumBot
 
         public async Task<bool> BlumValidateTask(string taskId, string keyword)
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
             var request = new BlumTasksValidateRequest() { Keyword = keyword };
             string serializedRequest = JsonSerializer.Serialize(request);
             var serializedRequestContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
@@ -217,8 +250,8 @@ namespace BlumBot
 
         public async Task<bool> BlumClaimTask(string taskId)
         {
-            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index);
-            var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/claim", null);
+            var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubQuery.Proxy);
+            var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/claim", (HttpContent)null);
             if (httpResponse is not null)
             {
                 if (httpResponse.IsSuccessStatusCode)
