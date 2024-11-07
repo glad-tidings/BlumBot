@@ -1,4 +1,4 @@
-﻿namespace BlumBot
+namespace BlumBot
 {
     class Program
     {
@@ -6,7 +6,7 @@
 
         static void Main()
         {
-            BlumQueries.Add(new BlumQuery() { Index = 0, Name = "Account 1", Auth = "query_id of account 1" });
+            BlumQueries.Add(new BlumQuery() { Index = 0, Name = "Account 1", Auth = "query_id of account 1", Proxy = "" });
 
             foreach (var Query in BlumQueries)
             {
