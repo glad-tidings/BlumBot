@@ -16,7 +16,7 @@ I am not responsible for your account. Please consider the potential risks befor
 | Multi Proxy               | ✅        |
 
 ## Settings
-open project in visual studio ([Download Visual Studio Code](https://code.visualstudio.com/download)) and in program.cs find
+open project in visual studio ([Download Visual Studio Express](https://visualstudio.microsoft.com/vs/express/)) and in program.cs find
 ```c#
 BlumQueries.Add(new BlumQuery() { Index = 0, Name = "Account 1", Auth = "query_id of account 1", Proxy = "" });
 ```
