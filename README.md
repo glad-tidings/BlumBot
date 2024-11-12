@@ -28,6 +28,9 @@ BlumQueries.Add(new BlumQuery() { Index = 2, Name = "Account 3", Auth = "query_i
 ```
 and build or start project ([Get Telegram MiniGame Query ID using Chrome](https://youtu.be/r0Ulqev-9M4))
 
+## QueryID Script
+Script to request query_id of all your Telegram accounts for any mini Telegram Bot App ==> [TelegramMiniAppQueryID](https://github.com/glad-tidings/TelegramMiniAppQueryID)
+
 ## ☕Buy me a coffee
 ```
 USDT(TRC20): TRjdnBWpS1xT4a2oKQdFsM3AAc6TxVmqGZ
