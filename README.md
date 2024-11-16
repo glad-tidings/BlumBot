@@ -18,6 +18,9 @@ I am not responsible for your account. Please consider the potential risks befor
 | Auto Query ID             | ✅        |
 | Auto Join Tribe           | ✅        |
 
+## Releases
+[Download BOT](https://github.com/glad-tidings/BlumBot/releases)
+
 ## Settings
 Enter all account phone number in data.txt file and add proxies in proxy.txt(e.g. socks5://10.10.10.10:1080)
 
