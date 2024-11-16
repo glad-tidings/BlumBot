@@ -74,11 +74,15 @@ namespace BlumBot
 
         private string getSession()
         {
-            string query = "";
             var vw = new TelegramMiniApp.WebView(PubQuery.API_ID, PubQuery.API_HASH, PubQuery.Name, PubQuery.Phone, "BlumCryptoBot", "https://telegram.blum.codes/");
-            vw.Get_tgWebAppData(out query);
+            string url = vw.Get_URL().Result;
 
-            return query;
+            if (url != string.Empty)
+            {
+                return url.Split(new string[] { "tgWebAppData=" }, StringSplitOptions.None)[0].Split(new string[] { "&tgWebAppVersion" }, StringSplitOptions.None)[0];
+            }
+
+            return string.Empty;
         }
 
         private async Task<BlumLoginResponse?> BlumLogin()
