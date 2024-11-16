@@ -195,6 +195,7 @@ namespace BlumBot
                             if (Query.Game & Sync.PlayPasses > 0)
                             {
                                 int gamecountRND = RND.Next(Query.GameCount[0], Query.GameCount[1]);
+                                if (gamecountRND > Sync.PlayPasses) { gamecountRND = Sync.PlayPasses; }
                                 for (int I = 1, loopTo = gamecountRND; I <= loopTo; I++)
                                 {
                                     var gamePlay = await Bot.BlumGamePlay();
