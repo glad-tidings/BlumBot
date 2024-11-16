@@ -1,20 +1,45 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace BlumBot
 {
 
     public class BlumQuery
     {
+        [JsonPropertyName("Index")]
         public int Index { get; set; }
+        [JsonPropertyName("Name")]
         public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("API_ID")]
+        public string API_ID { get; set; } = string.Empty;
+        [JsonPropertyName("API_HASH")]
+        public string API_HASH { get; set; } = string.Empty;
+        [JsonPropertyName("Phone")]
+        public string Phone { get; set; } = string.Empty;
         public string Auth { get; set; } = string.Empty;
-        public string Proxy { get; set; } = string.Empty;
-    }
-
-    public class Httpbin
-    {
-        [JsonPropertyName("origin")]
-        public string Origin { get; set; } = string.Empty;
+        [JsonPropertyName("Active")]
+        public bool Active { get; set; }
+        [JsonPropertyName("DailyReward")]
+        public bool DailyReward { get; set; }
+        [JsonPropertyName("Farming")]
+        public bool Farming { get; set; }
+        [JsonPropertyName("FriendBonus")]
+        public bool FriendBonus { get; set; }
+        [JsonPropertyName("Game")]
+        public bool Game { get; set; }
+        [JsonPropertyName("GameCount")]
+        public int[] GameCount { get; set; } = [];
+        [JsonPropertyName("GamePoint")]
+        public int[] GamePoint { get; set; } = [];
+        [JsonPropertyName("GameSleep")]
+        public int[] GameSleep { get; set; } = [];
+        [JsonPropertyName("Task")]
+        public bool Task { get; set; }
+        [JsonPropertyName("TaskSleep")]
+        public int[] TaskSleep { get; set; } = [];
+        [JsonPropertyName("DaySleep")]
+        public int[] DaySleep { get; set; } = [];
+        [JsonPropertyName("NightSleep")]
+        public int[] NightSleep { get; set; } = [];
     }
 
     public class BlumLoginRequest
@@ -50,7 +75,7 @@ namespace BlumBot
     public class BlumTribeMyResponse
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         [JsonPropertyName("title")]
         public string Title { get; set; } = string.Empty;
         [JsonPropertyName("rank")]
@@ -110,7 +135,7 @@ namespace BlumBot
     public class BlumAnswersResponse
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         [JsonPropertyName("keyword")]
         public string Keyword { get; set; } = string.Empty;
     }
@@ -128,7 +153,7 @@ namespace BlumBot
     public class BlumTasksTasks
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
+        public string Id { get; set; }
         [JsonPropertyName("type")]
         public string Type { get; set; } = string.Empty;
         [JsonPropertyName("status")]
@@ -173,5 +198,105 @@ namespace BlumBot
     {
         [JsonPropertyName("keyword")]
         public string Keyword { get; set; } = string.Empty;
+    }
+
+    public class BlumGamePlayResponse
+    {
+        [JsonPropertyName("gameId")]
+        public string GameId { get; set; } = string.Empty;
+        [JsonPropertyName("assets")]
+        public BlumGamePlayAssets? Assets { get; set; }
+    }
+
+    public class BlumGamePlayAssets
+    {
+        [JsonPropertyName("BOMB")]
+        public BlumGamePlayAssetsItem? BOMB { get; set; }
+        [JsonPropertyName("CLOVER")]
+        public BlumGamePlayAssetsItem? CLOVER { get; set; }
+        [JsonPropertyName("FREEZE")]
+        public BlumGamePlayAssetsItem? FREEZE { get; set; }
+    }
+
+    public class BlumGamePlayAssetsItem
+    {
+        [JsonPropertyName("probability")]
+        public string Probability { get; set; } = string.Empty;
+        [JsonPropertyName("perClick")]
+        public string PerClick { get; set; } = string.Empty;
+    }
+
+    public class BlumGameClaimRequest
+    {
+        [JsonPropertyName("payload")]
+        public string Payload { get; set; } = string.Empty;
+    }
+
+    public class BlumPayloadRequest
+    {
+        [JsonPropertyName("gameId")]
+        public string GameId { get; set; } = string.Empty;
+        [JsonPropertyName("challenge")]
+        public BlumPayloadChallenge? Challenge { get; set; }
+        [JsonPropertyName("earnedPoints")]
+        public BlumPayloadEarnedPoints? EarnedPoints { get; set; }
+        [JsonPropertyName("assetClicks")]
+        public Dictionary<string, BlumPayloadAssetClick>? AssetClicks { get; set; }
+    }
+
+    public class BlumPayloadChallenge
+    {
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = string.Empty;
+        [JsonPropertyName("nonce")]
+        public int Nonce { get; set; }
+        [JsonPropertyName("hash")]
+        public string Hash { get; set; } = string.Empty;
+    }
+
+    public class BlumPayloadEarnedPoints
+    {
+        [JsonPropertyName("BP")]
+        public BlumPayloadEarnedPointsPoint? BP { get; set; }
+    }
+
+    public class BlumPayloadEarnedPointsPoint
+    {
+        [JsonPropertyName("amount")]
+        public int Amount { get; set; }
+    }
+
+    public class BlumPayloadAssetClick
+    {
+        [JsonPropertyName("clicks")]
+        public int Clicks { get; set; }
+    }
+
+    public class BlumTribeResponse
+    {
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = string.Empty;
+        [JsonPropertyName("title")]
+        public string Title { get; set; } = string.Empty;
+        [JsonPropertyName("countMembers")]
+        public int CountMembers { get; set; }
+        [JsonPropertyName("earnBalance")]
+        public string EarnBalance { get; set; } = string.Empty;
+        [JsonPropertyName("rank")]
+        public int Rank { get; set; }
+    }
+
+    public class ProxyType
+    {
+        [JsonPropertyName("Index")]
+        public int Index { get; set; }
+        [JsonPropertyName("Proxy")]
+        public string Proxy { get; set; } = string.Empty;
+    }
+
+    public class Httpbin
+    {
+        [JsonPropertyName("origin")]
+        public string Origin { get; set; } = string.Empty;
     }
 }

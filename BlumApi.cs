@@ -1,21 +1,27 @@
-using System.Net;
+﻿using System.Net;
 
 namespace BlumBot
 {
-
     public class BlumApi
     {
         private readonly HttpClient client;
 
-        public BlumApi(int Mode, string queryID, int queryIndex, string Proxy)
+        public BlumApi(int Mode, string queryID, int queryIndex, ProxyType[] Proxy)
         {
-            if (!string.IsNullOrEmpty(Proxy))
+            var FProxy = Proxy.Where(x => x.Index == queryIndex);
+            if (FProxy.Count() != 0)
             {
-                var handler = new HttpClientHandler() { Proxy = new WebProxy() { Address = new Uri(Proxy) } };
-                client = new HttpClient(handler) { Timeout = new TimeSpan(0, 0, 30) };
+                if (!string.IsNullOrEmpty(FProxy.ElementAtOrDefault(0)?.Proxy))
+                {
+                    var handler = new HttpClientHandler() { Proxy = new WebProxy() { Address = new Uri(FProxy.ElementAtOrDefault(0)?.Proxy ?? string.Empty) } };
+                    client = new HttpClient(handler) { Timeout = new TimeSpan(0, 0, 30) };
+                }
+                else
+                    client = new HttpClient() { Timeout = new TimeSpan(0, 0, 30) };
             }
             else
                 client = new HttpClient() { Timeout = new TimeSpan(0, 0, 30) };
+            // client.DefaultRequestHeaders.CacheControl = New CacheControlHeaderValue With {.NoCache = True, .NoStore = True, .MaxAge = TimeSpan.FromSeconds(0)}
             if (Mode == 1)
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {queryID}");
             client.DefaultRequestHeaders.Add("Accept-Language", "fa-IR,fa;q=0.9,en-US;q=0.8,en;q=0.7,en-GB;q=0.6,zh-TW;q=0.5,zh-CN;q=0.4,zh;q=0.3");
@@ -39,7 +45,7 @@ namespace BlumBot
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.ExpectationFailed, ReasonPhrase = ex.Message };
+                return new HttpResponseMessage() { StatusCode = HttpStatusCode.ExpectationFailed, ReasonPhrase = ex.Message };
             }
         }
 
@@ -51,7 +57,7 @@ namespace BlumBot
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.ExpectationFailed, ReasonPhrase = ex.Message };
+                return new HttpResponseMessage() { StatusCode = HttpStatusCode.ExpectationFailed, ReasonPhrase = ex.Message };
             }
         }
     }
