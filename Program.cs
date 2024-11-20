@@ -94,12 +94,12 @@ namespace BlumBot
                             var tribe = await Bot.BlumTribe();
                             if (tribe != null)
                             {
-                                if (tribe.Id != "99ed77d4-ed85-4163-897f-11fb1e7f55a7")
+                                if (tribe.Id != "aa3a8ca1-8ac2-483f-9985-033932318f95")
                                 {
                                     bool tribeLeave = await Bot.BlumTribeLeave();
                                     if (tribeLeave)
                                     {
-                                        bool tribeJoin = await Bot.BlumTribeJoin("99ed77d4-ed85-4163-897f-11fb1e7f55a7");
+                                        bool tribeJoin = await Bot.BlumTribeJoin("aa3a8ca1-8ac2-483f-9985-033932318f95");
                                         if (tribeJoin)
                                             Log.Show("Blum", Query.Name, $"join tribe successfully", ConsoleColor.Green);
                                         else
@@ -109,7 +109,7 @@ namespace BlumBot
                             }
                             else
                             {
-                                bool tribeJoin = await Bot.BlumTribeJoin("99ed77d4-ed85-4163-897f-11fb1e7f55a7");
+                                bool tribeJoin = await Bot.BlumTribeJoin("aa3a8ca1-8ac2-483f-9985-033932318f95");
                                 if (tribeJoin)
                                     Log.Show("Blum", Query.Name, $"join tribe successfully", ConsoleColor.Green);
                                 else
