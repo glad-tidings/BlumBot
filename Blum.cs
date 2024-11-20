@@ -72,16 +72,6 @@ namespace BlumBot
         public long? CanClaimAt { get; set; }
     }
 
-    public class BlumTribeMyResponse
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
-        [JsonPropertyName("title")]
-        public string Title { get; set; } = string.Empty;
-        [JsonPropertyName("rank")]
-        public int Rank { get; set; }
-    }
-
     public class BlumWalletMyResponse
     {
         [JsonPropertyName("address")]
@@ -135,7 +125,7 @@ namespace BlumBot
     public class BlumAnswersResponse
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
+        public string Id { get; set; }
         [JsonPropertyName("keyword")]
         public string Keyword { get; set; } = string.Empty;
     }
@@ -153,7 +143,7 @@ namespace BlumBot
     public class BlumTasksTasks
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         [JsonPropertyName("type")]
         public string Type { get; set; } = string.Empty;
         [JsonPropertyName("status")]
@@ -275,9 +265,11 @@ namespace BlumBot
     public class BlumTribeResponse
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
+        public string Id { get; set; }
         [JsonPropertyName("title")]
         public string Title { get; set; } = string.Empty;
+        [JsonPropertyName("chatname")]
+        public string Chatname { get; set; } = string.Empty;
         [JsonPropertyName("countMembers")]
         public int CountMembers { get; set; }
         [JsonPropertyName("earnBalance")]

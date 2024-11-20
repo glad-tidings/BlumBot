@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 
 namespace BlumBot
 {
@@ -54,6 +55,18 @@ namespace BlumBot
             try
             {
                 return await client.PostAsync(requestUri, content);
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponseMessage() { StatusCode = HttpStatusCode.ExpectationFailed, ReasonPhrase = ex.Message };
+            }
+        }
+
+        public async Task<HttpResponseMessage> BAPIPostAsJson(string requestUri, HttpContent content)
+        {
+            try
+            {
+                return await client.PostAsJsonAsync(requestUri, content);
             }
             catch (Exception ex)
             {

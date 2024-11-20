@@ -142,7 +142,7 @@ namespace BlumBot
         public async Task<bool> BlumDailyReward()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/daily-reward?offset=-210", (HttpContent)null);
+            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/daily-reward?offset=-210", null);
             if (httpResponse is not null)
                 return httpResponse.IsSuccessStatusCode;
 
@@ -169,7 +169,7 @@ namespace BlumBot
         public async Task<bool> BlumStartFarming()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/start", (HttpContent)null);
+            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/start", null);
             if (httpResponse is not null)
                 return httpResponse.IsSuccessStatusCode;
 
@@ -179,7 +179,7 @@ namespace BlumBot
         public async Task<bool> BlumClaimFarming()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/claim", (HttpContent)null);
+            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/claim", null);
             if (httpResponse is not null)
                 return httpResponse.IsSuccessStatusCode;
 
@@ -206,7 +206,7 @@ namespace BlumBot
         public async Task<bool> BlumClaimFriends()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://user-domain.blum.codes/api/v1/friends/claim", (HttpContent)null);
+            var httpResponse = await BAPI.BAPIPost($"https://user-domain.blum.codes/api/v1/friends/claim", null);
             if (httpResponse is not null)
                 return httpResponse.IsSuccessStatusCode;
 
@@ -256,7 +256,7 @@ namespace BlumBot
         public async Task<bool> BlumStartTask(string taskId)
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/start", (HttpContent)null);
+            var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/start", null);
             if (httpResponse is not null)
                 return httpResponse.IsSuccessStatusCode;
 
@@ -279,7 +279,7 @@ namespace BlumBot
         public async Task<bool> BlumClaimTask(string taskId)
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/claim", (HttpContent)null);
+            var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/claim", null);
             if (httpResponse is not null)
                 return httpResponse.IsSuccessStatusCode;
 
@@ -289,7 +289,7 @@ namespace BlumBot
         public async Task<BlumGamePlayResponse?> BlumGamePlay()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v2/game/play", (HttpContent)null);
+            var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v2/game/play", null);
             if (httpResponse is not null)
             {
                 if (httpResponse.IsSuccessStatusCode)
@@ -348,7 +348,7 @@ namespace BlumBot
         public async Task<BlumTribeResponse?> BlumTribe()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIGet($"https://tribe-domain.blum.codes/api/v1/tribe/my");
+            var httpResponse = await BAPI.BAPIGet("https://tribe-domain.blum.codes/api/v1/tribe/my");
             if (httpResponse is not null)
             {
                 if (httpResponse.IsSuccessStatusCode)
@@ -365,21 +365,21 @@ namespace BlumBot
         public async Task<bool> BlumTribeLeave()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://tribe-domain.blum.codes/api/v1/tribe/leave", (HttpContent)null);
-            if (httpResponse is not null)
+            var httpResponse = await BAPI.BAPIPostAsJson("https://tribe-domain.blum.codes/api/v1/tribe/leave", null);
+            if(httpResponse is not null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
         public async Task<bool> BlumTribeJoin(string tribeId)
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
-            var httpResponse = await BAPI.BAPIPost($"https://tribe-domain.blum.codes/api/v1/tribe/{tribeId}/join", (HttpContent)null);
+            var httpResponse = await BAPI.BAPIPost($"https://tribe-domain.blum.codes/api/v1/tribe/{tribeId}/join", null);
             if (httpResponse is not null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
     }
