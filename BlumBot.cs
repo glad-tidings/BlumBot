@@ -23,7 +23,7 @@ namespace BlumBot
             IPAddress = GetIP().Result;
             PubQuery.Auth = getSession();
             var Login = BlumLogin().Result;
-            if (Login is not null)
+            if (Login != null)
             {
                 AccessToken = Login.Token?.Access ?? string.Empty;
                 HasError = false;
@@ -41,7 +41,7 @@ namespace BlumBot
         {
             HttpClient client;
             var FProxy = PubProxy.Where(x => x.Index == PubQuery.Index);
-            if (FProxy.Count() != 0)
+            if (FProxy.Any())
             {
                 if (!string.IsNullOrEmpty(FProxy.ElementAtOrDefault(0)?.Proxy))
                 {
@@ -59,7 +59,7 @@ namespace BlumBot
                 httpResponse = await client.GetAsync($"https://httpbin.org/ip");
             }
             catch { }
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -92,7 +92,7 @@ namespace BlumBot
             string serializedRequest = JsonSerializer.Serialize(request);
             var serializedRequestContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
             var httpResponse = await BAPI.BAPIPost($"https://user-domain.blum.codes/api/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP", serializedRequestContent);
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -109,7 +109,7 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIGet($"https://game-domain.blum.codes/api/v1/time/now");
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -126,7 +126,7 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIGet($"https://game-domain.blum.codes/api/v2/game/eligibility/dogs_drop");
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -143,17 +143,17 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/daily-reward?offset=-210", null);
-            if (httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
         public async Task<BlumUserBalanceResponse?> BlumUserBalance()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIGet($"https://game-domain.blum.codes/api/v1/user/balance");
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -170,27 +170,27 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/start", null);
-            if (httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
         public async Task<bool> BlumClaimFarming()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v1/farming/claim", null);
-            if (httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
         public async Task<BlumFriendsBalanceResponse?> BlumFriendsBalance()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIGet($"https://user-domain.blum.codes/api/v1/friends/balance");
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -207,10 +207,10 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPost($"https://user-domain.blum.codes/api/v1/friends/claim", null);
-            if (httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
         public async Task<List<BlumAnswersResponse>?> BlumAnswers()
@@ -223,7 +223,7 @@ namespace BlumBot
                 httpResponse = await client.GetAsync($"https://raw.githubusercontent.com/glad-tidings/BlumBot/refs/heads/main/tasks.json");
             }
             catch { }
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -240,12 +240,21 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIGet($"https://earn-domain.blum.codes/api/v1/tasks");
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
                     var responseStream = await httpResponse.Content.ReadAsStreamAsync();
                     var responseJson = await JsonSerializer.DeserializeAsync<List<BlumTasksResponse>>(responseStream);
+                    responseJson?.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections.Where(x => x.Title == "New").ElementAtOrDefault(0)?.Tasks.Clear();
+                    foreach (var subSections in responseJson?.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections ?? [])
+                    {
+                        if (subSections.Title != "New")
+                        {
+                            foreach (var subSectionsTasks in subSections.Tasks)
+                                responseJson?.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections.Where(x => x.Title == "New").ElementAtOrDefault(0)?.Tasks.Add(subSectionsTasks);
+                        }
+                    }
                     return responseJson;
                 }
             }
@@ -257,10 +266,10 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/start", null);
-            if (httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
         public async Task<bool> BlumValidateTask(string taskId, string keyword)
@@ -270,27 +279,27 @@ namespace BlumBot
             string serializedRequest = JsonSerializer.Serialize(request);
             var serializedRequestContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
             var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/validate", serializedRequestContent);
-            if (httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
         public async Task<bool> BlumClaimTask(string taskId)
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPost($"https://earn-domain.blum.codes/api/v1/tasks/{taskId}/claim", null);
-            if (httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
-
-            return false;
+            else
+                return false;
         }
 
         public async Task<BlumGamePlayResponse?> BlumGamePlay()
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v2/game/play", null);
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -308,8 +317,8 @@ namespace BlumBot
             var client = new HttpClient() { Timeout = new TimeSpan(0, 0, 30) };
             client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue() { NoCache = true, NoStore = true, MaxAge = TimeSpan.FromSeconds(0d) };
             HttpResponseMessage prehttpResponse = null;
-            int freeze = (int)Math.Round(points / 50d + Random.Shared.NextDouble() * 2d);
-            int bombs = Convert.ToInt32(points < 150 ? Random.Shared.NextDouble() * 2d : 0);
+            int freeze = (int)Math.Round(points / 50d + Random.Shared.NextDouble() * 2);
+            int bombs = (int)(points < 150 ? Random.Shared.NextDouble() * 2 : 0);
             var prerequest = new BlumPayloadRequest()
             {
                 GameId = gameID,
@@ -323,7 +332,7 @@ namespace BlumBot
                 prehttpResponse = await client.PostAsync($"https://blum-payload-generator.vercel.app/api/generate", preserializedRequestContent);
             }
             catch { }
-            if (prehttpResponse is not null)
+            if (prehttpResponse != null)
             {
                 if (prehttpResponse.IsSuccessStatusCode)
                 {
@@ -336,7 +345,7 @@ namespace BlumBot
                         string serializedRequest = JsonSerializer.Serialize(request);
                         var serializedRequestContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
                         var httpResponse = await BAPI.BAPIPost($"https://game-domain.blum.codes/api/v2/game/claim", serializedRequestContent);
-                        if (httpResponse is not null)
+                        if (httpResponse != null)
                             return httpResponse.IsSuccessStatusCode;
                     }
                 }
@@ -349,7 +358,7 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIGet("https://tribe-domain.blum.codes/api/v1/tribe/my");
-            if (httpResponse is not null)
+            if (httpResponse != null)
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -366,7 +375,7 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPostAsJson("https://tribe-domain.blum.codes/api/v1/tribe/leave", null);
-            if(httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
             else
                 return false;
@@ -376,11 +385,10 @@ namespace BlumBot
         {
             var BAPI = new BlumApi(1, AccessToken, PubQuery.Index, PubProxy);
             var httpResponse = await BAPI.BAPIPost($"https://tribe-domain.blum.codes/api/v1/tribe/{tribeId}/join", null);
-            if (httpResponse is not null)
+            if (httpResponse != null)
                 return httpResponse.IsSuccessStatusCode;
             else
                 return false;
         }
-
     }
 }

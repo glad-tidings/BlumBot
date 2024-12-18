@@ -51,7 +51,7 @@ namespace BlumBot
     public class BlumLoginResponse
     {
         [JsonPropertyName("token")]
-        public BlumLoginToken? Token { get; set; }
+        public BlumLoginToken Token { get; set; } = new();
     }
 
     public class BlumLoginToken
@@ -101,7 +101,7 @@ namespace BlumBot
         [JsonPropertyName("timestamp")]
         public long Timestamp { get; set; }
         [JsonPropertyName("farming")]
-        public BlumUserBalanceFarming? Farming { get; set; }
+        public BlumUserBalanceFarming Farming { get; set; } = new();
     }
 
     public class BlumUserBalanceFarming
@@ -125,7 +125,7 @@ namespace BlumBot
     public class BlumAnswersResponse
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         [JsonPropertyName("keyword")]
         public string Keyword { get; set; } = string.Empty;
     }
@@ -135,9 +135,9 @@ namespace BlumBot
         [JsonPropertyName("sectionType")]
         public string SectionType { get; set; } = string.Empty;
         [JsonPropertyName("tasks")]
-        public List<BlumTasksTasks>? Tasks { get; set; }
+        public List<BlumTasksTasks> Tasks { get; set; } = [];
         [JsonPropertyName("subSections")]
-        public List<BlumTasksSubSections>? SubSections { get; set; }
+        public List<BlumTasksSubSections> SubSections { get; set; } = [];
     }
 
     public class BlumTasksTasks
@@ -157,7 +157,7 @@ namespace BlumBot
         [JsonPropertyName("isDisclaimerRequired")]
         public bool IsDisclaimerRequired { get; set; }
         [JsonPropertyName("subTasks")]
-        public List<BlumTasksTasksSubTasks>? SubTasks { get; set; }
+        public List<BlumTasksTasksSubTasks> SubTasks { get; set; } = [];
     }
 
     public class BlumTasksTasksSubTasks
@@ -179,9 +179,9 @@ namespace BlumBot
     public class BlumTasksSubSections
     {
         [JsonPropertyName("title")]
-        public string title { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
         [JsonPropertyName("tasks")]
-        public List<BlumTasksTasks>? Tasks { get; set; }
+        public List<BlumTasksTasks> Tasks { get; set; } = [];
     }
 
     public class BlumTasksValidateRequest
@@ -195,17 +195,17 @@ namespace BlumBot
         [JsonPropertyName("gameId")]
         public string GameId { get; set; } = string.Empty;
         [JsonPropertyName("assets")]
-        public BlumGamePlayAssets? Assets { get; set; }
+        public BlumGamePlayAssets Assets { get; set; } = new();
     }
 
     public class BlumGamePlayAssets
     {
         [JsonPropertyName("BOMB")]
-        public BlumGamePlayAssetsItem? BOMB { get; set; }
+        public BlumGamePlayAssetsItem BOMB { get; set; } = new();
         [JsonPropertyName("CLOVER")]
-        public BlumGamePlayAssetsItem? CLOVER { get; set; }
+        public BlumGamePlayAssetsItem CLOVER { get; set; } = new();
         [JsonPropertyName("FREEZE")]
-        public BlumGamePlayAssetsItem? FREEZE { get; set; }
+        public BlumGamePlayAssetsItem FREEZE { get; set; } = new();
     }
 
     public class BlumGamePlayAssetsItem
@@ -227,11 +227,11 @@ namespace BlumBot
         [JsonPropertyName("gameId")]
         public string GameId { get; set; } = string.Empty;
         [JsonPropertyName("challenge")]
-        public BlumPayloadChallenge? Challenge { get; set; }
+        public BlumPayloadChallenge Challenge { get; set; } = new();
         [JsonPropertyName("earnedPoints")]
-        public BlumPayloadEarnedPoints? EarnedPoints { get; set; }
+        public BlumPayloadEarnedPoints EarnedPoints { get; set; } = new();
         [JsonPropertyName("assetClicks")]
-        public Dictionary<string, BlumPayloadAssetClick>? AssetClicks { get; set; }
+        public Dictionary<string, BlumPayloadAssetClick> AssetClicks { get; set; } = [];
     }
 
     public class BlumPayloadChallenge
@@ -247,7 +247,7 @@ namespace BlumBot
     public class BlumPayloadEarnedPoints
     {
         [JsonPropertyName("BP")]
-        public BlumPayloadEarnedPointsPoint? BP { get; set; }
+        public BlumPayloadEarnedPointsPoint BP { get; set; } = new();
     }
 
     public class BlumPayloadEarnedPointsPoint
@@ -265,7 +265,7 @@ namespace BlumBot
     public class BlumTribeResponse
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         [JsonPropertyName("title")]
         public string Title { get; set; } = string.Empty;
         [JsonPropertyName("chatname")]

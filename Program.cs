@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Microsoft.VisualBasic;
+using System.Text.Json;
 
 namespace BlumBot
 {
@@ -90,9 +91,9 @@ namespace BlumBot
                         var dogs = await Bot.BlumEligibility();
                         if (Sync != null)
                         {
-                            Log.Show("Blum", Query.Name, $"synced successfully. B<{Convert.ToDouble(Sync.AvailableBalance)}> G<{Sync.PlayPasses}> DE<{dogs}>", ConsoleColor.Blue);
+                            Log.Show("Blum", Query.Name, $"synced successfully. B<{Conversion.Int(Sync.AvailableBalance)}> G<{Sync.PlayPasses}> DE<{dogs}>", ConsoleColor.Blue);
                             var Tribe = await Bot.BlumTribe();
-                            if (Tribe is not null)
+                            if (Tribe != null)
                             {
                                 if (Tribe.Chatname != "gtbums")
                                 {
@@ -130,7 +131,7 @@ namespace BlumBot
                             if (Query.Farming)
                             {
                                 long timeNow = await Bot.BlumTimeNow();
-                                if (Sync.Farming != null)
+                                if (Sync.Farming is not null)
                                 {
                                     if (timeNow > Sync.Farming.EndTime)
                                     {
@@ -147,6 +148,7 @@ namespace BlumBot
                                             Log.Show("Blum", Query.Name, $"new farming started", ConsoleColor.Green);
                                         else
                                             Log.Show("Blum", Query.Name, $"start new farming failed", ConsoleColor.Red);
+
                                         Thread.Sleep(3000);
                                     }
                                 }
@@ -175,19 +177,20 @@ namespace BlumBot
                             if (Query.FriendBonus)
                             {
                                 var friends = await Bot.BlumFriendsBalance();
-                                if (friends != null)
+                                if (friends is not null)
                                 {
-                                    double AmountForClaim = 0d;
-                                    double.TryParse(friends.AmountForClaim, out AmountForClaim);
-                                    if (friends.CanClaim & AmountForClaim != 0d)
+                                    _ = double.TryParse(friends.AmountForClaim, out double AmountForClaim);
+                                    if (friends.CanClaim & AmountForClaim != 0)
                                     {
                                         bool claimFriends = await Bot.BlumClaimFriends();
                                         if (claimFriends)
                                             Log.Show("Blum", Query.Name, $"friends bonus claimed", ConsoleColor.Green);
                                         else
                                             Log.Show("Blum", Query.Name, $"claim friends bonus failed", ConsoleColor.Red);
+
                                         Thread.Sleep(3000);
                                     }
+
                                     Thread.Sleep(3000);
                                 }
                             }
@@ -195,11 +198,12 @@ namespace BlumBot
                             if (Query.Game & Sync.PlayPasses > 0)
                             {
                                 int gamecountRND = RND.Next(Query.GameCount[0], Query.GameCount[1]);
-                                if (gamecountRND > Sync.PlayPasses) { gamecountRND = Sync.PlayPasses; }
+                                if (gamecountRND > Sync.PlayPasses)
+                                    gamecountRND = Sync.PlayPasses;
                                 for (int I = 1, loopTo = gamecountRND; I <= loopTo; I++)
                                 {
                                     var gamePlay = await Bot.BlumGamePlay();
-                                    if (gamePlay != null)
+                                    if (gamePlay is not null)
                                     {
                                         Log.Show("Blum", Query.Name, $"{I}/{gamecountRND} start playing a game", ConsoleColor.Green);
                                         int gamebeetRND = RND.Next(30, 40);
@@ -222,12 +226,12 @@ namespace BlumBot
                             if (Query.Task)
                             {
                                 var tasks = await Bot.BlumTasks();
-                                if (tasks != null)
+                                if (tasks is not null)
                                 {
-                                    foreach (var task in tasks.Where(x => x.SectionType == "WEEKLY_ROUTINE").ElementAtOrDefault(0)?.Tasks?.Where(x => x.Id == "c7432e39-73b4-4cea-9740-f820b11d9da3").ElementAtOrDefault(0)?.SubTasks?.Where(x => x.Status == "NOT_STARTED" & x.IsDisclaimerRequired == false) ?? [])
+                                    foreach (var task in tasks.Where(x => x.SectionType == "WEEKLY_ROUTINE").ElementAtOrDefault(0)?.Tasks.Where(x => x.Id == "c7432e39-73b4-4cea-9740-f820b11d9da3").ElementAtOrDefault(0)?.SubTasks.Where(x => x.Status == "NOT_STARTED" & x.IsDisclaimerRequired == false) ?? [])
                                     {
                                         var startTask = Bot.BlumStartTask(task.Id);
-                                        if (startTask != null)
+                                        if (startTask is not null)
                                             Log.Show("Blum", Query.Name, $"task '{task.Title}' started", ConsoleColor.Green);
                                         else
                                             Log.Show("Blum", Query.Name, $"start task '{task.Title}' failed", ConsoleColor.Red);
@@ -236,56 +240,76 @@ namespace BlumBot
                                         Thread.Sleep(eachtaskRND * 1000);
                                     }
 
-                                    foreach (var task in tasks.Where(x => x.SectionType == "WEEKLY_ROUTINE").ElementAtOrDefault(0)?.Tasks?.Where(x => x.Id == "c7432e39-73b4-4cea-9740-f820b11d9da3").ElementAtOrDefault(0)?.SubTasks?.Where(x => x.Status == "READY_FOR_CLAIM" & x.IsDisclaimerRequired == false) ?? [])
+                                    Thread.Sleep(3000);
+                                    tasks = await Bot.BlumTasks();
+                                    if (tasks is not null)
                                     {
-                                        var claimTask = Bot.BlumClaimTask(task.Id);
-                                        if (claimTask != null)
-                                            Log.Show("Blum", Query.Name, $"task '{task.Title}' claimed", ConsoleColor.Green);
-                                        else
-                                            Log.Show("Blum", Query.Name, $"claim task '{task.Title}' failed", ConsoleColor.Red);
-
-                                        int eachtaskRND = RND.Next(Query.TaskSleep[0], Query.TaskSleep[1]);
-                                        Thread.Sleep(eachtaskRND * 1000);
-                                    }
-
-                                    var taskAnswers = await Bot.BlumAnswers();
-                                    if (taskAnswers != null)
-                                    {
-                                        foreach (var task in tasks.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections?.Where(x => x.title == "Academy").ElementAtOrDefault(0)?.Tasks?.Where(x => x.ValidationType == "KEYWORD" & x.Status == "NOT_STARTED" & x.IsHidden == false & x.IsDisclaimerRequired == false) ?? [])
-                                        {
-                                            var startTask = Bot.BlumStartTask(task.Id);
-                                            if (startTask != null)
-                                                Log.Show("Blum", Query.Name, $"task '{task.Title}' started", ConsoleColor.Green);
-                                            else
-                                                Log.Show("Blum", Query.Name, $"start task '{task.Title}' failed", ConsoleColor.Red);
-                                            int eachtaskRND = RND.Next(Query.TaskSleep[0], Query.TaskSleep[1]);
-                                            Thread.Sleep(eachtaskRND * 1000);
-                                        }
-                                        foreach (var task in tasks.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections?.Where(x => x.title == "Academy").ElementAtOrDefault(0)?.Tasks?.Where(x => x.ValidationType == "KEYWORD" & x.Status == "READY_FOR_VERIFY" & x.IsHidden == false & x.IsDisclaimerRequired == false) ?? [])
-                                        {
-                                            var answer = taskAnswers.Where(x => (x.Id ?? "") == (task.Id ?? ""));
-                                            if (answer.Count() != 0)
-                                            {
-                                                var verifyTask = Bot.BlumValidateTask(task.Id, answer.ElementAtOrDefault(0)?.Keyword ?? string.Empty);
-                                                if (verifyTask != null)
-                                                    Log.Show("Blum", Query.Name, $"task '{task.Title}' verified", ConsoleColor.Green);
-                                                else
-                                                    Log.Show("Blum", Query.Name, $"verify task '{task.Title}' failed", ConsoleColor.Red);
-                                                int eachtaskRND = RND.Next(Query.TaskSleep[0], Query.TaskSleep[1]);
-                                                Thread.Sleep(eachtaskRND * 1000);
-                                            }
-                                        }
-
-                                        foreach (var task in tasks.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections?.Where(x => x.title == "Academy").ElementAtOrDefault(0)?.Tasks?.Where(x => x.ValidationType == "KEYWORD" & x.Status == "READY_FOR_CLAIM" & x.IsHidden == false & x.IsDisclaimerRequired == false) ?? [])
+                                        foreach (var task in tasks.Where(x => x.SectionType == "WEEKLY_ROUTINE").ElementAtOrDefault(0)?.Tasks.Where(x => x.Id == "c7432e39-73b4-4cea-9740-f820b11d9da3").ElementAtOrDefault(0)?.SubTasks.Where(x => x.Status == "READY_FOR_CLAIM" & x.IsDisclaimerRequired == false) ?? [])
                                         {
                                             var claimTask = Bot.BlumClaimTask(task.Id);
-                                            if (claimTask != null)
+                                            if (claimTask is not null)
                                                 Log.Show("Blum", Query.Name, $"task '{task.Title}' claimed", ConsoleColor.Green);
                                             else
                                                 Log.Show("Blum", Query.Name, $"claim task '{task.Title}' failed", ConsoleColor.Red);
 
                                             int eachtaskRND = RND.Next(Query.TaskSleep[0], Query.TaskSleep[1]);
                                             Thread.Sleep(eachtaskRND * 1000);
+                                        }
+                                    }
+
+                                    var taskAnswers = await Bot.BlumAnswers();
+                                    if (taskAnswers is not null)
+                                    {
+                                        tasks = await Bot.BlumTasks();
+                                        if (tasks is not null)
+                                        {
+                                            foreach (var task in tasks.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections.Where(x => x.Title == "New").ElementAtOrDefault(0)?.Tasks.Where(x => (x.ValidationType == "DEFAULT" | x.ValidationType == "KEYWORD") & x.Status == "NOT_STARTED" & x.Type != "PROGRESS_TARGET" & x.IsHidden == false & x.IsDisclaimerRequired == false) ?? [])
+                                            {
+                                                var startTask = Bot.BlumStartTask(task.Id);
+                                                if (startTask is not null)
+                                                    Log.Show("Blum", Query.Name, $"task '{task.Title}' started", ConsoleColor.Green);
+                                                else
+                                                    Log.Show("Blum", Query.Name, $"start task '{task.Title}' failed", ConsoleColor.Red);
+
+                                                int eachtaskRND = RND.Next(Query.TaskSleep[0], Query.TaskSleep[1]);
+                                                Thread.Sleep(eachtaskRND * 1000);
+                                            }
+
+                                            tasks = await Bot.BlumTasks();
+                                            if (tasks is not null)
+                                            {
+                                                foreach (var task in tasks.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections.Where(x => x.Title == "New").ElementAtOrDefault(0)?.Tasks.Where(x => x.ValidationType == "KEYWORD" & x.Status == "READY_FOR_VERIFY" & x.IsHidden == false & x.IsDisclaimerRequired == false) ?? [])
+                                                {
+                                                    var answer = taskAnswers.Where(x => (x.Id ?? "") == (task.Id ?? ""));
+                                                    if (answer.Any())
+                                                    {
+                                                        var verifyTask = Bot.BlumValidateTask(task.Id, answer.ElementAtOrDefault(0)?.Keyword ?? string.Empty);
+                                                        if (verifyTask is not null)
+                                                            Log.Show("Blum", Query.Name, $"task '{task.Title}' verified", ConsoleColor.Green);
+                                                        else
+                                                            Log.Show("Blum", Query.Name, $"verify task '{task.Title}' failed", ConsoleColor.Red);
+
+                                                        int eachtaskRND = RND.Next(Query.TaskSleep[0], Query.TaskSleep[1]);
+                                                        Thread.Sleep(eachtaskRND * 1000);
+                                                    }
+                                                }
+
+                                                tasks = await Bot.BlumTasks();
+                                                if (tasks is not null)
+                                                {
+                                                    foreach (var task in tasks.Where(x => x.SectionType == "DEFAULT").ElementAtOrDefault(0)?.SubSections.Where(x => x.Title == "New").ElementAtOrDefault(0)?.Tasks.Where(x => x.Status == "READY_FOR_CLAIM" & x.IsHidden == false & x.IsDisclaimerRequired == false) ?? [])
+                                                    {
+                                                        var claimTask = Bot.BlumClaimTask(task.Id);
+                                                        if (claimTask is not null)
+                                                            Log.Show("Blum", Query.Name, $"task '{task.Title}' claimed", ConsoleColor.Green);
+                                                        else
+                                                            Log.Show("Blum", Query.Name, $"claim task '{task.Title}' failed", ConsoleColor.Red);
+
+                                                        int eachtaskRND = RND.Next(Query.TaskSleep[0], Query.TaskSleep[1]);
+                                                        Thread.Sleep(eachtaskRND * 1000);
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
